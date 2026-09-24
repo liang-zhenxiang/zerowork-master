@@ -9,6 +9,7 @@
  * 不透明命令识别（编码命令、解释器内联执行）、config-as-code 路径判定。
  */
 import { describe, it, expect } from "vitest";
+import { isAbsolute, resolve } from "node:path";
 import {
 	canonicalizePath,
 	classifyCommandOperation,
@@ -23,22 +24,24 @@ import {
 // ── 凭据目录 ──────────────────────────────────────────────
 
 describe("defaultProtectedDirs", () => {
-	const home = "/home/tester";
+	// 期望值交给所在平台的 `path` 算：实现用的是 `resolve`，Windows 上带盘符、
+	// 分隔符是 `\`，这里硬写 `"/"` 拼接必然对不上。
+	const home = resolve("/home/tester");
 	const dirs = defaultProtectedDirs(home);
 
 	it("覆盖常见的凭据落点", () => {
 		for (const name of [".ssh", ".gnupg", ".aws", ".kube", ".docker"]) {
-			expect(dirs, `缺少 ${name}`).toContain(`${home}/${name}`);
+			expect(dirs, `缺少 ${name}`).toContain(resolve(home, name));
 		}
 	});
 
 	it("包含单文件凭据（isInside 对文件同样成立）", () => {
-		expect(dirs).toContain(`${home}/.npmrc`);
-		expect(dirs).toContain(`${home}/.git-credentials`);
+		expect(dirs).toContain(resolve(home, ".npmrc"));
+		expect(dirs).toContain(resolve(home, ".git-credentials"));
 	});
 
 	it("全部是绝对路径", () => {
-		for (const d of dirs) expect(d.startsWith("/"), `${d} 不是绝对路径`).toBe(true);
+		for (const d of dirs) expect(isAbsolute(d), `${d} 不是绝对路径`).toBe(true);
 	});
 });
 
@@ -72,12 +75,14 @@ describe("isPathContained", () => {
 
 describe("canonicalizePath", () => {
 	it("相对路径补成绝对路径", () => {
-		expect(canonicalizePath("a/b")).toBe(`${process.cwd()}/a/b`);
+		const out = canonicalizePath("a/b");
+		expect(isAbsolute(out)).toBe(true);
+		expect(out).toBe(resolve("a/b"));
 	});
 
 	it("归一化 `.` 与 `..`", () => {
-		expect(canonicalizePath("/a/b/../c")).toBe("/a/c");
-		expect(canonicalizePath("/a/./b")).toBe("/a/b");
+		expect(canonicalizePath("/a/b/../c")).toBe(resolve("/a/c"));
+		expect(canonicalizePath("/a/./b")).toBe(resolve("/a/b"));
 	});
 });
 

@@ -1,0 +1,50 @@
+# ⚠️ 目录类模式**一律锚定到仓库根**（前导 `/`）。
+#
+# 为什么值得专门写一句：不带前导斜杠的模式在**任意层级**都匹配。`work/` 曾经本意只指
+# 仓库根那个解包目录，实际却把 `resources/scenes/work/` 一起吞了 —— 于是
+# `resources/scenes/work/prompt.md` 没进库，别人克隆下来**应用直接起不来**
+# （`loadResources()` 在场景目录缺 prompt.md 时抛错）。同类还有 `*.exe`：
+# 它吞掉了随包二进制 `resources/bin/{fd,rg,uv}.exe`（这三个的 README 与许可
+# NOTICE 都在库里，二进制却不在 —— 打包时会静默丢件）。
+# 加一个仓库根下的新目录前，先确认它跟下面任何一条不重名。
+
+# 构建产物
+/out/
+/dist/
+/release/
+
+# 依赖
+node_modules/
+
+# 测试与调试产物
+/artifacts/
+/coverage/
+*.log
+
+# 编辑器
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+
+# 解包中间产物（体积大，不入库；只限仓库根）
+/extract/
+/work/
+/*.7z
+/*.exe
+
+# 本地环境
+.env
+.env.local
+
+# Python 字节码缓存（运行时自动重建，不入库）
+__pycache__/
+*.pyc
+
+# 本仓库代码分析的临时工作区（命令产物，不入库）
+docs/analysis-temp/
+docs/repo-analysis-*.md
+
+# 内部前端重建的工作笔记（不入库）
+docs/superpowers/

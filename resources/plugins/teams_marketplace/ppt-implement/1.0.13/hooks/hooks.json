@@ -1,0 +1,52 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${ZEROWORK_PLUGIN_ROOT}/skills/ppt-implement/scripts/set-env.js\" \"${ZEROWORK_PLUGIN_ROOT}\" \"${ZEROWORK_PROJECT_DIR}\" \"SessionStart\"",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${ZEROWORK_PLUGIN_ROOT}/skills/ppt-implement/scripts/setup-project.js\" \"${ZEROWORK_PLUGIN_ROOT}\" \"${ZEROWORK_PROJECT_DIR}\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${ZEROWORK_PLUGIN_ROOT}/skills/ppt-implement/scripts/post-slide.js\" \"${ZEROWORK_PLUGIN_ROOT}\" \"${ZEROWORK_PROJECT_DIR}\""
+          }
+        ]
+      }
+    ],
+
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${ZEROWORK_PLUGIN_ROOT}/skills/ppt-implement/scripts/screenshot-cover.js\" \"${ZEROWORK_PLUGIN_ROOT}\" \"${ZEROWORK_PROJECT_DIR}\" > /dev/null 2>&1"
+          },
+          {
+            "type": "command",
+            "command": "node \"${ZEROWORK_PLUGIN_ROOT}/skills/ppt-implement/scripts/export-ppt.js\" \"${ZEROWORK_PLUGIN_ROOT}\" \"${ZEROWORK_PROJECT_DIR}\" > /dev/null 2>&1"
+          }
+        ]
+      }
+    ]
+  }
+}

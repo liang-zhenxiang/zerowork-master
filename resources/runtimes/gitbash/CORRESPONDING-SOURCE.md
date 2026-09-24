@@ -1,0 +1,63 @@
+# gitbash 运行时的对应源码与许可义务（GPLv2 §3 / GPLv3 §6）
+
+本文件是 `gitbash` 运行时的许可义务载体（GPLv2 §3 / GPLv3 §6）。**运行期**由
+`src/main/daemon/runtimes.js` 的 `extractPortableGit` 在解包发行物之后拷进实例根
+`<configDir>/runtimes/gitbash/<version>/`，所以它**始终与二进制在一起**；它也随应用
+分发（`resources/runtimes/gitbash/`）。
+（打包配置 `electron-builder.yml` 不在本仓库中。）
+它是我们履行「提供 Corresponding Source 获取方式」这条义务的载体，**不随版本更新删改**，
+只在事实变化（换版本、换组件）时更新。
+
+## 我们分发的是什么
+
+- 上游发行物：**Git for Windows PortableGit 2.55.0.5（64-bit）**
+  —— `PortableGit-2.55.0.5-64-bit.7z.exe`，sha256
+  `5aa8a20f6e9abb2c755f0e73c91c687701a46b309ad84a0ca6509380fa4ae290`
+- 来源：<https://github.com/git-for-windows/git/releases/tag/v2.55.0.windows.5>
+- **我们未修改其中任何文件**：用户机器上的实例就是该发行物用**它自带的 SFX 解包器**
+  （`<artifact> -y -o<dir>`，在整包 sha256 校验通过之后执行）解出来的结果（仅解包，
+  不改内容、不改源码）。因此不产生「标注修改」的义务，但许可文本与版权声明**原样保留**。
+- 解包动作不引入任何第三方解压器：解包能力就在发行物自身里，7-Zip（LGPL + unRAR 限制）
+  **不进分发物**（构建期脚本亦然）。
+
+## 许可文本在哪（**不得删**）
+
+解包结果里自带、我们原样保留：
+
+- 根 `LICENSE.txt` —— 上游的分发说明与 GNU GPL 全文；
+- `mingw64/share/licenses/**` —— MSYS2 分发的逐组件许可文本（本版本实测 39 个 `LICENSE*`
+  文件，覆盖 curl / expat / libffi / libiconv / libssh2 / libtasn1 … 等）；
+- `usr/share/licenses/**` 或各组件的 `COPYING*`（若有）。
+
+构建期脚本（`scripts/fetch-gitbash.mjs`，**不在本仓库中**）与运行期安装
+（`src/main/daemon/runtimes.js` 的 `extractPortableGit`）都把「`usr/bin/bash.exe`、
+根 `LICENSE.txt`、`CORRESPONDING-SOURCE.md`」作为必备文件断言，缺一即丢弃、不许进位
+（`GITBASH_REQUIRED_FILES`）——「不得删」因此是机械的。
+
+## Corresponding Source 的获取方式（GPLv2 §3）
+
+我们按「版本钉死的上游获取指引」提供对应源码：
+
+| 组件 | 对应源码 |
+|---|---|
+| Git for Windows 发行版（含打包脚本与构建配置） | <https://github.com/git-for-windows/git/tree/v2.55.0.windows.5> ；打包侧 <https://github.com/git-for-windows/build-extra> |
+| MSYS2 用户态与各 `mingw64` / `usr` 组件（bash、coreutils、zlib、curl、OpenSSL、libssh2…） | <https://github.com/msys2/MSYS2-packages>、<https://github.com/msys2/MINGW-packages>（按 `mingw64/share/licenses/**` 里各组件版本取对应 tag） |
+| GNU Bash | <https://ftp.gnu.org/gnu/bash/> （版本见载荷内 `usr/bin/bash.exe --version`） |
+| Perl（GPL / Artistic 双许可） | <https://www.cpan.org/src/> |
+
+**书面要约**：自本版本发布起 **3 年内**，任何收到本分发物的人都可以向 ZeroWork 项目维护者
+索取上述组件的对应源码（内部试用阶段：直接联系项目对接人）。我们会以与二进制相同的
+可获得性提供，或在必要时提供上游点对点获取指引的副本。
+（构建脚本 `scripts/fetch-gitbash.mjs` 不在本仓库中。）
+
+## 聚合与非传染
+
+`gitbash` 只以**独立进程**被调用（不静态/动态链接进 ZeroWork），属 GPLv2 §2 末段 /
+GPLv3 §5 的 mere aggregation；ZeroWork 本体不受 GPL 传染。**前提是别把它链进来。**
+
+## 商标
+
+「Git」名称与 logo 属上游商标，我们**不用它作我们的品牌名、不在宣传位使用**：界面里的
+运行时显示名取中性描述（「Bash 与 unix 工具（随包托管）」，见 `src/main/daemon/runtimes.js`
+的 `GITBASH_LABEL`），该名称只出现在许可清单与致谢里。
+（上游商标政策的精确条款未逐条核对，发布前需逐条复核。）

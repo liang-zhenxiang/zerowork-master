@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: 校验（${{ matrix.os }}）
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 静态检查
+        run: npm run lint
+
+      - name: 类型检查
+        run: npm run typecheck
+
+      - name: 单元测试
+        run: npm run test
+
+      - name: 构建
+        run: npm run build
+
+  gui-test:
+    name: 端到端 GUI 测试
+    # Electron 的 GUI 测试需要真实显示环境，放在 macOS 上跑最稳
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 构建
+        run: npm run build
+
+      - name: 端到端测试（启动健康度 + 分区域 + IPC 功能）
+        run: npm run test:gui
+
+      - name: 主链路测试（mock 模型服务，无需凭据）
+        run: npm run test:gui:model && npm run test:gui:loop
+
+      - name: 上传测试截图
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gui-test-screenshots
+          path: artifacts/
+          if-no-files-found: warn
+
+  daemon-module-graph:
+    name: 校验 daemon 模块图
+    # daemon 由 40 个 ES 模块组成，彼此用相对 import 相连。这层错误构建期抓不到：
+    # 漏一个 export、写错一个路径，只会在运行时某个冷门分支抛 ReferenceError。
+    # 这道检查逐个解析模块，验相对 import 都指向真实文件、具名 import 都能对上导出。
+    # 它是仓库里**唯一**覆盖 daemon 模块边界的自动化检查 —— 单元测试只跑 tests/unit，
+    # 不碰 daemon 的模块图。
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 校验 daemon 模块图闭合
+        run: npm run check:daemon-graph

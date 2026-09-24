@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"target": "ES2023",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ES2023", "DOM", "DOM.Iterable"],
+		"jsx": "react-jsx",
+
+		"allowJs": true,
+		"checkJs": false,
+		"noEmit": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+
+		"strict": false,
+		"noImplicitAny": false,
+		"types": ["node"]
+	},
+
+	// checkJs 暂时关闭，原因见 docs/architecture.md「类型检查」一节：
+	// 应用主体以 JS 提供，没有编译期类型信息。
+	// 直接开 checkJs 会产生数以万计的 noImplicitAny 报错，
+	// 这些报错反映的是"类型还没补"，不是"代码有问题"，开着只会淹没真实问题。
+	//
+	// 正确做法是渐进补类型：从 src/shared/ 与工具函数开始加 JSDoc，
+	// 每加一批就把对应目录从 exclude 里挪出来。补到足以开启 checkJs 时再开。
+	"include": ["src/**/*.js", "tools/**/*.mjs", "tests/**/*.mjs", "electron.vite.config.mjs"],
+	"exclude": ["node_modules", "out", "src/renderer/src/**/*.js", "src/main/daemon/**/*.js"]
+}

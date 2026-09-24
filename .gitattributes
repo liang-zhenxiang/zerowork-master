@@ -1,0 +1,22 @@
+# 仓库统一使用 LF。
+# resources/ 下的内容来自 Windows 构建环境，原本是 CRLF；
+# 若不统一，每次 checkout 都会产生整文件级别的假 diff。
+* text=auto eol=lf
+
+# 二进制资源不做换行符转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.exe binary
+*.7z binary
+*.zip binary
+
+# 这两个文件体量大，禁用文本转换，避免行尾归一化产生巨型 diff
+src/renderer/src/*.js -text
+src/main/daemon/index.js -text

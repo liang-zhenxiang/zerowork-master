@@ -387,8 +387,8 @@ Linux 发行包是 `tar.xz`，需要再加一个 xz 解码器（Node 无内置�
 >
 > 1. 确认 Apache-2.0 是你们想要的许可证，不是的话直接替换 `LICENSE` 文件
 >    与 `package.json` 的 `license` 字段（MIT / AGPL-3.0 都是常见选择）
-> 2. 确认 `LICENSE` 末尾的版权署名 —— 当前写的是
->    `Copyright 2026 zerowork contributors`，应替换为**真实的版权主体**
+> 2. 确认 `LICENSE` 末尾的版权署名 —— 当前写的是 `Copyright 2026 ZeroWork`，
+>    如与真实的权利主体不符，请替换
 > 3. 核对第三方依赖的许可条款：本项目依赖
 >    `@earendil-works/pi-coding-agent` 等包，它们的条款会对再分发构成
 >    额外约束。运行 `npx license-checker --summary` 可查看汇总

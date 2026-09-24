@@ -78,11 +78,11 @@ npx license-checker --summary
 ## 4. 许可证与版权主体
 
 - 当前 `LICENSE` 为 **Apache-2.0**（见文件内注释中给出的选型理由）
-- `LICENSE` 末尾版权署名为 `Copyright 2026 zerowork contributors`
+- `LICENSE` 末尾版权署名为 `Copyright 2026 ZeroWork`
 
 - [ ] 确认 Apache-2.0 符合预期（如需更换，替换 `LICENSE` 与
       `package.json` 的 `license` 字段即可）
-- [ ] 将版权署名替换为**真实的版权主体**
+- [ ] 确认版权署名与真实的权利主体一致
 
 ## 5. 运行时依赖的外部服务（供参考）
 

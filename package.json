@@ -7,7 +7,14 @@
   "description": "办公 AI Agent 桌面端（基于 pi agent harness）",
   "author": "ZeroWork",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/your-org/zerowork",
+  "homepage": "https://github.com/liang-zhenxiang/zerowork-master",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liang-zhenxiang/zerowork-master.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liang-zhenxiang/zerowork-master/issues"
+  },
   "engines": {
     "node": ">=22.19.0"
   },

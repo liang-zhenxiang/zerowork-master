@@ -6,6 +6,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# 只读权限足够：workflow 只做 checkout、构建、上传测试截图。
+# 显式收敛 GITHUB_TOKEN，避免来自 fork 的 PR 拿到写权限。
+permissions:
+  contents: read
+
 jobs:
   verify:
     name: 校验（${{ matrix.os }}）
@@ -16,9 +21,9 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
@@ -43,9 +48,9 @@ jobs:
     # Electron 的 GUI 测试需要真实显示环境，放在 macOS 上跑最稳
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
@@ -64,7 +69,7 @@ jobs:
 
       - name: 上传测试截图
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: gui-test-screenshots
           path: artifacts/
@@ -79,9 +84,9 @@ jobs:
     # 不碰 daemon 的模块图。
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
